@@ -2,7 +2,7 @@ import { useState } from 'react';
 import PhotoUpload from '../components/PhotoUpload';
 import SkinToneAnalysis from '../components/SkinToneAnalysis';
 import { Button } from '@/components/ui/button';
-import { Plus } from 'lucide-react';
+import { Plus, X } from 'lucide-react';
 import { toast } from 'sonner';
 
 const Index = () => {
@@ -13,6 +13,12 @@ const Index = () => {
     if (newPhotos.length > 0) {
       toast.success(`Added ${newPhotos.length} new photo${newPhotos.length > 1 ? 's' : ''}`);
     }
+  };
+
+  const handleDeletePhoto = (index: number) => {
+    const newPhotos = photos.filter((_, i) => i !== index);
+    setPhotos(newPhotos);
+    toast.success('Photo removed');
   };
 
   return (
@@ -58,15 +64,22 @@ const Index = () => {
                   <Plus className="h-4 w-4" />
                 </Button>
               </div>
-              <div className="grid gap-4">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                 {photos.map((photo, index) => (
-                  <div key={index} className="rounded-lg overflow-hidden shadow-lg">
+                  <div key={index} className="relative group">
                     <img
                       src={URL.createObjectURL(photo)}
                       alt={`Uploaded photo ${index + 1}`}
-                      className="w-full h-auto object-cover"
+                      className="w-full aspect-square object-cover rounded-lg"
                       onLoad={(e) => URL.revokeObjectURL((e.target as HTMLImageElement).src)}
                     />
+                    <button
+                      onClick={() => handleDeletePhoto(index)}
+                      className="absolute top-1 right-1 p-1 bg-white/80 rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-white"
+                      aria-label="Delete photo"
+                    >
+                      <X className="h-4 w-4 text-gray-700" />
+                    </button>
                   </div>
                 ))}
               </div>
