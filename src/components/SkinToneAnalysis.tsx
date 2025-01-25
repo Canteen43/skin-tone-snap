@@ -49,22 +49,18 @@ const SkinToneAnalysis = ({ photo }: SkinToneAnalysisProps) => {
     const analyzeSkinTone = async () => {
       try {
         setIsAnalyzing(true);
-        // Initialize the image classification pipeline
         const classifier = await pipeline('image-classification', 'Xenova/skin-tone-classifier');
-        
-        // Create a URL for the image file
         const imageUrl = URL.createObjectURL(photo);
-        
-        // Perform classification
         const result = await classifier(imageUrl);
         
-        // Get the top prediction
-        const prediction = result[0].label.toLowerCase();
+        // Handle both array and single result outputs
+        const prediction = Array.isArray(result) 
+          ? result[0].score > 0.5 ? result[0].label : 'medium'
+          : result.score > 0.5 ? result.label : 'medium';
         
-        // Set the analysis results
-        setAnalysis(skinToneData[prediction] || skinToneData['medium']);
+        const predictionKey = prediction.toLowerCase();
+        setAnalysis(skinToneData[predictionKey] || skinToneData['medium']);
         
-        // Clean up the URL
         URL.revokeObjectURL(imageUrl);
       } catch (error) {
         console.error('Error analyzing skin tone:', error);
