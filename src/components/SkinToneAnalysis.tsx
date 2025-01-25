@@ -38,7 +38,7 @@ const SkinToneAnalysis = ({ photos, onPredictions }: SkinToneAnalysisProps) => {
             
             // Get predictions using the classifier
             const results = await classifier(imageUrl, {
-              topk: skinToneLabels.length,
+              top_k: skinToneLabels.length,
             }) as ImageClassificationOutput;
             
             URL.revokeObjectURL(imageUrl);
