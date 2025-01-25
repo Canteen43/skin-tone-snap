@@ -58,14 +58,14 @@ const SkinToneAnalysis = ({ photo }: SkinToneAnalysisProps) => {
         setError(false);
         console.log('Starting analysis...');
         
-        const classifier = await pipeline('image-classification', 'microsoft/resnet-50');
+        const classifier = await pipeline('image-classification', 'Xenova/vit-base-patch16-224');
         console.log('Classifier created');
         
         const imageUrl = URL.createObjectURL(photo);
         console.log('Image URL created:', imageUrl);
         
         const result = await classifier(imageUrl, {
-          top_k: 1,
+          topk: 1,
         });
         console.log('Classification result:', result);
         
