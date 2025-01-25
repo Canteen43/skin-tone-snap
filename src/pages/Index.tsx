@@ -79,7 +79,7 @@ const Index = () => {
                 </Button>
               </div>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                {photosWithPredictions.map(({ file, predictions }, index) => (
+                {photosWithPredictions.map(({ file }, index) => (
                   <div key={index} className="space-y-2">
                     <div className="relative group">
                       <img
@@ -96,18 +96,6 @@ const Index = () => {
                         <X className="h-4 w-4 text-gray-700" />
                       </button>
                     </div>
-                    {predictions && (
-                      <div className="text-xs bg-gray-50 p-2 rounded-lg space-y-1">
-                        {predictions.map((pred, i) => (
-                          <div key={i} className="flex justify-between">
-                            <span className="text-gray-600">{pred.label}:</span>
-                            <span className="text-gray-900 font-medium">
-                              {(pred.score * 100).toFixed(1)}%
-                            </span>
-                          </div>
-                        ))}
-                      </div>
-                    )}
                   </div>
                 ))}
               </div>
