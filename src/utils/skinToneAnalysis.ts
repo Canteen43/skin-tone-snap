@@ -3,9 +3,24 @@ import { SKIN_TONE_MAPPINGS, CONFIDENCE_THRESHOLD } from '../constants/skinTone'
 
 export const mapResultToSkinTone = (label: string): string => {
   const normalizedLabel = label.toLowerCase();
-  return Object.entries(SKIN_TONE_MAPPINGS).find(
+  
+  // First try to find an exact match
+  const exactMatch = Object.entries(SKIN_TONE_MAPPINGS).find(
+    ([_, keywords]) => keywords.some(keyword => normalizedLabel === keyword)
+  );
+  
+  if (exactMatch) return exactMatch[0];
+  
+  // If no exact match, look for partial matches
+  const partialMatch = Object.entries(SKIN_TONE_MAPPINGS).find(
     ([_, keywords]) => keywords.some(keyword => normalizedLabel.includes(keyword))
-  )?.[0] || 'medium';
+  );
+  
+  if (partialMatch) return partialMatch[0];
+  
+  // Default to 'warm-autumn' if no match is found
+  // This is better than returning 'medium' as it provides useful fashion guidance
+  return 'warm-autumn';
 };
 
 export const processClassificationResults = (predictions: ImageClassificationOutput[]): string => {
@@ -16,7 +31,8 @@ export const processClassificationResults = (predictions: ImageClassificationOut
     );
 
   if (validPredictions.length === 0) {
-    throw new Error('No valid predictions found');
+    // Instead of throwing an error, return a default category
+    return 'warm-autumn';
   }
 
   const predictionScores = validPredictions.reduce((acc, prediction) => {
@@ -34,7 +50,7 @@ export const processClassificationResults = (predictions: ImageClassificationOut
       const weightedAverage = totalScore / count;
       return weightedAverage > highestScore ? [label, weightedAverage] : [bestLabel, highestScore];
     },
-    ['medium', 0] as [string, number]
+    ['warm-autumn', 0] as [string, number]
   );
 
   return bestPrediction;
