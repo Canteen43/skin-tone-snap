@@ -3,7 +3,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/com
 import { pipeline } from '@huggingface/transformers';
 import { toast } from 'sonner';
 import { SkinToneInfo, ImageClassificationOutput } from '../types/skinTone';
-import { SKIN_TONE_DATA } from '../constants/skinTone';
+import { SKIN_TONE_DATA, SKIN_TONE_MAPPINGS } from '../constants/skinTone';
 import { processClassificationResults } from '../utils/skinToneAnalysis';
 
 interface SkinToneAnalysisProps {
@@ -26,12 +26,19 @@ const SkinToneAnalysis = ({ photos, onPredictions }: SkinToneAnalysisProps) => {
         
         const classifier = await pipeline('image-classification', 'Xenova/vit-base-patch16-224');
         
-        // Process each photo and get multiple predictions
+        // Create labels for all our skin tone categories
+        const skinToneLabels = Object.entries(SKIN_TONE_MAPPINGS).flatMap(([category, keywords]) => 
+          keywords.map(keyword => ({ category, keyword }))
+        );
+        
+        // Process each photo and get predictions for our specific categories
         const predictions = await Promise.all(
           photos.map(async (photo, index) => {
             const imageUrl = URL.createObjectURL(photo);
+            
+            // Get predictions for all our keywords
             const results = await classifier(imageUrl, {
-              top_k: 5, // Get top 5 predictions for more accurate analysis
+              candidate_labels: skinToneLabels.map(label => label.keyword),
             }) as ImageClassificationOutput;
             
             URL.revokeObjectURL(imageUrl);

@@ -1,49 +1,38 @@
 import { ClassificationResult, ImageClassificationOutput, AnalysisResult } from '../types/skinTone';
 import { SKIN_TONE_MAPPINGS, UNDERTONE_MAPPINGS, SEASON_CHARACTERISTICS, CONFIDENCE_THRESHOLD } from '../constants/skinTone';
 
-export const mapResultToSkinTone = (label: string): string => {
-  const normalizedLabel = label.toLowerCase();
+export const aggregateScoresByCategory = (predictions: ClassificationResult[]): Record<string, number> => {
+  const scores: Record<string, number> = {};
   
-  // Enhanced logic for darker skin tones
-  if (normalizedLabel.includes('black') || 
-      normalizedLabel.includes('ebony') || 
-      normalizedLabel.includes('dark-skinned')) {
-    return 'deep';
-  }
+  // Initialize scores for each category
+  Object.keys(SKIN_TONE_MAPPINGS).forEach(category => {
+    scores[category] = 0;
+  });
   
-  if (normalizedLabel.includes('dark') || 
-      normalizedLabel.includes('brown') || 
-      normalizedLabel.includes('rich')) {
-    return 'dark';
-  }
+  // For each prediction, add its score to the corresponding category
+  predictions.forEach(prediction => {
+    Object.entries(SKIN_TONE_MAPPINGS).forEach(([category, keywords]) => {
+      if (keywords.some(keyword => prediction.label.toLowerCase().includes(keyword))) {
+        scores[category] += prediction.score;
+      }
+    });
+  });
   
-  // Check each skin tone category for matches
-  for (const [tone, keywords] of Object.entries(SKIN_TONE_MAPPINGS)) {
-    if (keywords.some(keyword => normalizedLabel.includes(keyword))) {
-      return tone;
-    }
-  }
-  
-  // Enhanced fallback logic based on specific keywords
-  if (normalizedLabel.includes('melanin') || normalizedLabel.includes('african')) {
-    return 'dark';
-  }
-  
-  return 'medium'; // Default fallback
+  return scores;
 };
 
-export const determineUndertone = (labels: string[]): 'warm' | 'cool' | 'neutral' => {
+export const determineUndertone = (predictions: ClassificationResult[]): 'warm' | 'cool' | 'neutral' => {
   const scores = {
     warm: 0,
     cool: 0,
     neutral: 0
   };
 
-  labels.forEach(label => {
-    const normalizedLabel = label.toLowerCase();
+  predictions.forEach(prediction => {
+    const label = prediction.label.toLowerCase();
     Object.entries(UNDERTONE_MAPPINGS).forEach(([undertone, keywords]) => {
-      if (keywords.some(keyword => normalizedLabel.includes(keyword))) {
-        scores[undertone as keyof typeof scores] += 1;
+      if (keywords.some(keyword => label.includes(keyword))) {
+        scores[undertone as keyof typeof scores] += prediction.score;
       }
     });
   });
@@ -59,7 +48,6 @@ export const determineSeason = (skinTone: string, undertone: 'warm' | 'cool' | '
   } else if (undertone === 'cool') {
     return ['light', 'fair', 'medium'].includes(skinTone) ? 'summer' : 'winter';
   } else {
-    // For neutral undertones, base it more on skin depth
     return ['light', 'fair'].includes(skinTone) ? 'summer' : 
            ['medium', 'olive'].includes(skinTone) ? 'spring' :
            ['tan', 'dark'].includes(skinTone) ? 'autumn' : 'winter';
@@ -67,59 +55,29 @@ export const determineSeason = (skinTone: string, undertone: 'warm' | 'cool' | '
 };
 
 export const processClassificationResults = (predictions: ImageClassificationOutput[]): AnalysisResult => {
-  const validPredictions = predictions
-    .flat()
-    .filter((pred): pred is ClassificationResult => 
-      pred && typeof pred.score === 'number' && pred.score >= CONFIDENCE_THRESHOLD
-    );
-
-  if (validPredictions.length === 0) {
+  const allPredictions = predictions.flat();
+  
+  if (allPredictions.length === 0) {
     throw new Error('No valid predictions found');
   }
 
-  // Enhanced analysis for multiple predictions
-  const results = validPredictions.map(prediction => ({
-    skinTone: mapResultToSkinTone(prediction.label),
-    confidence: prediction.score,
-    label: prediction.label
-  }));
-
-  // Weight darker tones more heavily in the final analysis
-  const skinToneScores: Record<string, { total: number; count: number }> = {};
-  const labels: string[] = [];
-
-  results.forEach(result => {
-    if (!skinToneScores[result.skinTone]) {
-      skinToneScores[result.skinTone] = { total: 0, count: 0 };
-    }
-    // Apply higher weight to darker tone predictions
-    const weight = ['dark', 'deep'].includes(result.skinTone) ? 1.5 : 1;
-    skinToneScores[result.skinTone].total += result.confidence * weight;
-    skinToneScores[result.skinTone].count += 1;
-    labels.push(result.label);
-  });
-
-  // Find the most confident skin tone
-  const [bestSkinTone] = Object.entries(skinToneScores).reduce(
-    ([bestTone, highestAvg], [tone, { total, count }]) => {
-      const average = total / count;
-      return average > highestAvg ? [tone, average] : [bestTone, highestAvg];
-    },
+  // Aggregate scores by category across all photos
+  const categoryScores = aggregateScoresByCategory(allPredictions);
+  
+  // Find the category with the highest score
+  const [bestSkinTone, highestScore] = Object.entries(categoryScores).reduce(
+    ([bestTone, highestScore], [tone, score]) => 
+      score > highestScore ? [tone, score] : [bestTone, highestScore],
     ['medium', 0] as [string, number]
   );
 
-  const undertone = determineUndertone(labels);
+  const undertone = determineUndertone(allPredictions);
   const season = determineSeason(bestSkinTone, undertone);
-
-  const overallConfidence = Object.values(skinToneScores).reduce(
-    (acc, { total, count }) => acc + (total / count),
-    0
-  ) / Object.keys(skinToneScores).length;
 
   return {
     skinTone: bestSkinTone,
     undertone,
     season,
-    confidence: overallConfidence
+    confidence: highestScore
   };
 };
