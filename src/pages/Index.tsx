@@ -1,9 +1,19 @@
 import { useState } from 'react';
 import PhotoUpload from '../components/PhotoUpload';
 import SkinToneAnalysis from '../components/SkinToneAnalysis';
+import { Button } from '@/components/ui/button';
+import { Plus } from 'lucide-react';
+import { toast } from 'sonner';
 
 const Index = () => {
   const [photos, setPhotos] = useState<File[]>([]);
+
+  const handleAddPhotos = (newPhotos: File[]) => {
+    setPhotos(prev => [...prev, ...newPhotos]);
+    if (newPhotos.length > 0) {
+      toast.success(`Added ${newPhotos.length} new photo${newPhotos.length > 1 ? 's' : ''}`);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-skin-light/30 to-white">
@@ -27,7 +37,27 @@ const Index = () => {
         ) : (
           <div className="grid md:grid-cols-2 gap-8 animate-fade-up">
             <div className="space-y-4">
-              <h2 className="text-2xl font-semibold text-gray-900">Your Photos</h2>
+              <div className="flex items-center justify-between">
+                <h2 className="text-2xl font-semibold text-gray-900">Your Photos</h2>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={() => {
+                    const input = document.createElement('input');
+                    input.type = 'file';
+                    input.multiple = true;
+                    input.accept = 'image/*';
+                    input.onchange = (e) => {
+                      const files = Array.from((e.target as HTMLInputElement).files || []);
+                      handleAddPhotos(files);
+                    };
+                    input.click();
+                  }}
+                  className="rounded-full hover:bg-skin-light/50"
+                >
+                  <Plus className="h-4 w-4" />
+                </Button>
+              </div>
               <div className="grid gap-4">
                 {photos.map((photo, index) => (
                   <div key={index} className="rounded-lg overflow-hidden shadow-lg">
