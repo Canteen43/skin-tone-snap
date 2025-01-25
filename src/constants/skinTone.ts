@@ -16,12 +16,12 @@ export const SKIN_TONE_DATA: Record<string, SkinToneInfo> = {
     undertone: 'cool',
     contrast: 'high',
     season: 'summer',
-    description: 'Fair skin typically burns easily and has visible veins. The complexion is often described as porcelain or ivory.',
+    description: 'Fair skin typically has cool undertones, making it ideal for soft, muted colors that complement rather than overwhelm.',
     characteristics: [
-      'Burns easily, rarely tans',
-      'Visible veins with blue/purple undertones',
-      'Freckles may be present',
-      'Often accompanied by light eyes'
+      'Looks stunning in soft, cool-toned pastels',
+      'Can wear icy colors beautifully',
+      'High contrast allows for dramatic color combinations',
+      'Muted colors are more flattering than very bright ones'
     ],
     palette: [
       '#87CEEB', // Sky Blue
@@ -42,12 +42,12 @@ export const SKIN_TONE_DATA: Record<string, SkinToneInfo> = {
     undertone: 'neutral',
     contrast: 'medium',
     season: 'spring',
-    description: 'Light skin has both warm and cool undertones, offering versatility in color choices. This skin type can gradually tan.',
+    description: 'Light skin with neutral undertones offers versatility in color choices, working well with both warm and cool tones.',
     characteristics: [
-      'Sometimes burns, gradually tans',
-      'Neutral undertones',
-      'Natural flush may be present',
-      'Versatile with most colors'
+      'Can balance both warm and cool colors effectively',
+      'Medium contrast allows for versatile color combinations',
+      'Looks great in clear, bright colors',
+      'Can experiment with both pastel and medium-intensity shades'
     ],
     palette: [
       '#FF69B4', // Hot Pink
@@ -68,12 +68,12 @@ export const SKIN_TONE_DATA: Record<string, SkinToneInfo> = {
     undertone: 'warm',
     contrast: 'medium',
     season: 'autumn',
-    description: 'Medium skin tones typically have warm or neutral undertones and tan easily. This versatile skin type works well with earth tones.',
+    description: 'Medium skin with warm undertones harmonizes beautifully with earth tones and rich, warm colors.',
     characteristics: [
-      'Tans easily',
-      'Warm golden undertones',
-      'Even complexion',
-      'Rarely burns'
+      'Earth tones create a natural, harmonious look',
+      'Rich autumn colors enhance natural warmth',
+      'Can wear both muted and clear colors confidently',
+      'Warm-toned accessories create a cohesive look'
     ],
     palette: [
       '#8B4513', // Saddle Brown
@@ -94,12 +94,12 @@ export const SKIN_TONE_DATA: Record<string, SkinToneInfo> = {
     undertone: 'warm',
     contrast: 'low',
     season: 'autumn',
-    description: 'Olive skin has distinct green or golden undertones and tans very easily. This skin type looks particularly striking in jewel tones.',
+    description: 'Olive skin with its warm undertones pairs exceptionally well with rich jewel tones and earthy colors.',
     characteristics: [
-      'Tans very easily, rarely burns',
-      'Green or golden undertones',
-      'Mediterranean or Asian heritage common',
-      'Looks great in jewel tones'
+      'Jewel tones create striking, sophisticated looks',
+      'Earth tones complement natural warmth beautifully',
+      'Can wear deep, rich colors with confidence',
+      'Monochromatic looks work well with low contrast'
     ],
     palette: [
       '#4B0082', // Indigo
@@ -120,12 +120,12 @@ export const SKIN_TONE_DATA: Record<string, SkinToneInfo> = {
     undertone: 'neutral',
     contrast: 'high',
     season: 'winter',
-    description: 'Deep skin tones have rich, warm undertones and natural sun protection. This skin type looks stunning in bright, vibrant colors.',
+    description: 'Deep skin tones create a perfect canvas for bold, vibrant colors and dramatic contrasts.',
     characteristics: [
-      'Never burns',
-      'Rich, warm undertones',
-      'Natural sun protection',
-      'Looks amazing in bright colors'
+      'Vibrant colors create stunning visual impact',
+      'High contrast allows for dramatic color combinations',
+      'Can wear pure, bright colors confidently',
+      'Bold color blocking creates sophisticated looks'
     ],
     palette: [
       '#FF0000', // Red
