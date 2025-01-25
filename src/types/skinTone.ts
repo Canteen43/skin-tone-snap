@@ -19,3 +19,10 @@ export interface ClassificationResult {
 
 export type ImageClassificationSingle = ClassificationResult;
 export type ImageClassificationOutput = ClassificationResult[];
+
+export interface AnalysisResult {
+  skinTone: string;
+  undertone: 'warm' | 'cool' | 'neutral';
+  season: 'spring' | 'summer' | 'autumn' | 'winter';
+  confidence: number;
+}

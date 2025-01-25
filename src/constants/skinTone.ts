@@ -3,142 +3,153 @@ import { SkinToneInfo } from '../types/skinTone';
 export const CONFIDENCE_THRESHOLD = 0.3;
 
 export const SKIN_TONE_MAPPINGS: Record<string, string[]> = {
-  fair: ['light', 'pale', 'fair', 'porcelain', 'ivory'],
-  light: ['beige', 'cream', 'neutral'],
-  medium: ['tan', 'medium', 'natural'],
-  olive: ['olive', 'golden', 'warm'],
-  deep: ['dark', 'deep', 'rich', 'ebony', 'mahogany']
+  light: ['light', 'pale', 'porcelain', 'ivory'],
+  fair: ['fair', 'beige', 'cream'],
+  medium: ['medium', 'natural', 'neutral'],
+  olive: ['olive', 'golden'],
+  tan: ['tan', 'warm', 'honey'],
+  dark: ['dark', 'rich', 'brown'],
+  deep: ['deep', 'ebony', 'mahogany']
+};
+
+export const UNDERTONE_MAPPINGS: Record<string, string[]> = {
+  warm: ['golden', 'yellow', 'peachy', 'warm'],
+  cool: ['pink', 'red', 'blue', 'cool'],
+  neutral: ['neutral', 'balanced', 'beige']
+};
+
+export const SEASON_CHARACTERISTICS: Record<string, string[]> = {
+  spring: ['bright', 'clear', 'warm', 'light'],
+  summer: ['soft', 'cool', 'muted', 'light'],
+  autumn: ['warm', 'deep', 'muted', 'rich'],
+  winter: ['cool', 'clear', 'bright', 'deep']
 };
 
 export const SKIN_TONE_DATA: Record<string, SkinToneInfo> = {
-  fair: {
-    tone: 'Fair',
+  light: {
+    tone: 'Light',
     undertone: 'cool',
     contrast: 'high',
     season: 'summer',
-    description: 'Fair skin typically has cool undertones, making it ideal for soft, muted colors that complement rather than overwhelm.',
+    description: 'Very light skin that typically has cool undertones, ideal for soft, muted colors.',
     characteristics: [
-      'Looks stunning in soft, cool-toned pastels',
-      'Can wear icy colors beautifully',
-      'High contrast allows for dramatic color combinations',
-      'Muted colors are more flattering than very bright ones'
+      'Burns easily, rarely tans',
+      'Veins appear blue or purple',
+      'Looks best in soft, cool-toned colors',
+      'Natural hair tends to be light'
     ],
-    palette: [
-      '#87CEEB', // Sky Blue
-      '#E6E6FA', // Lavender
-      '#98FB98', // Pale Green
-      '#FFB6C1', // Light Pink
-      '#B0C4DE', // Light Steel Blue
-      '#DDA0DD', // Plum
-      '#F0F8FF'  // Alice Blue
-    ],
+    palette: ['#E6E6FA', '#B0C4DE', '#FFB6C1', '#87CEEB', '#98FB98', '#DDA0DD'],
     jewelry: {
-      recommended: ['Silver', 'Platinum', 'White gold', 'Pearl'],
-      avoid: ['Yellow gold', 'Copper', 'Bronze']
+      recommended: ['Silver', 'Platinum', 'White gold'],
+      avoid: ['Yellow gold', 'Rose gold']
     }
   },
-  light: {
-    tone: 'Light',
+  fair: {
+    tone: 'Fair',
     undertone: 'neutral',
     contrast: 'medium',
     season: 'spring',
-    description: 'Light skin with neutral undertones offers versatility in color choices, working well with both warm and cool tones.',
+    description: 'Fair skin with neutral undertones that works well with both warm and cool colors.',
     characteristics: [
-      'Can balance both warm and cool colors effectively',
-      'Medium contrast allows for versatile color combinations',
-      'Looks great in clear, bright colors',
-      'Can experiment with both pastel and medium-intensity shades'
+      'Sometimes burns, gradually tans',
+      'Veins appear both blue and green',
+      'Can wear both warm and cool colors',
+      'Versatile with metal choices'
     ],
-    palette: [
-      '#FF69B4', // Hot Pink
-      '#4169E1', // Royal Blue
-      '#32CD32', // Lime Green
-      '#FF8C00', // Dark Orange
-      '#BA55D3', // Medium Orchid
-      '#20B2AA', // Light Sea Green
-      '#FFD700'  // Gold
-    ],
+    palette: ['#FFB347', '#98FF98', '#87CEEB', '#DDA0DD', '#F08080', '#E6E6FA'],
     jewelry: {
-      recommended: ['Mixed metals', 'Rose gold', 'Sterling silver'],
-      avoid: ['Overly oxidized metals']
+      recommended: ['Mixed metals', 'Rose gold', 'Silver'],
+      avoid: ['Very yellow gold']
     }
   },
   medium: {
     tone: 'Medium',
     undertone: 'warm',
     contrast: 'medium',
-    season: 'autumn',
-    description: 'Medium skin with warm undertones harmonizes beautifully with earth tones and rich, warm colors.',
+    season: 'spring',
+    description: 'Medium skin tone that typically has warm undertones and looks great in bright, clear colors.',
     characteristics: [
-      'Earth tones create a natural, harmonious look',
-      'Rich autumn colors enhance natural warmth',
-      'Can wear both muted and clear colors confidently',
-      'Warm-toned accessories create a cohesive look'
+      'Rarely burns, tans easily',
+      'Veins appear green',
+      'Looks best in warm, clear colors',
+      'Can wear most jewelry metals'
     ],
-    palette: [
-      '#8B4513', // Saddle Brown
-      '#DAA520', // Goldenrod
-      '#228B22', // Forest Green
-      '#CD853F', // Peru
-      '#B8860B', // Dark Goldenrod
-      '#800000', // Maroon
-      '#556B2F'  // Dark Olive Green
-    ],
+    palette: ['#FFD700', '#FF69B4', '#4169E1', '#32CD32', '#FF8C00', '#BA55D3'],
     jewelry: {
-      recommended: ['Yellow gold', 'Rose gold', 'Copper', 'Bronze'],
-      avoid: ['Platinum', 'White metals']
+      recommended: ['Gold', 'Rose gold', 'Bronze'],
+      avoid: ['Platinum']
     }
   },
   olive: {
     tone: 'Olive',
     undertone: 'warm',
-    contrast: 'low',
+    contrast: 'medium',
     season: 'autumn',
-    description: 'Olive skin with its warm undertones pairs exceptionally well with rich jewel tones and earthy colors.',
+    description: 'Olive skin with warm undertones that pairs beautifully with earth tones and rich colors.',
     characteristics: [
-      'Jewel tones create striking, sophisticated looks',
-      'Earth tones complement natural warmth beautifully',
-      'Can wear deep, rich colors with confidence',
-      'Monochromatic looks work well with low contrast'
+      'Rarely burns, tans very easily',
+      'Natural greenish undertone',
+      'Looks best in earth tones',
+      'Great with gold jewelry'
     ],
-    palette: [
-      '#4B0082', // Indigo
-      '#800080', // Purple
-      '#DC143C', // Crimson
-      '#006400', // Dark Green
-      '#B22222', // Fire Brick
-      '#483D8B', // Dark Slate Blue
-      '#8B008B'  // Dark Magenta
-    ],
+    palette: ['#DAA520', '#8B4513', '#228B22', '#CD853F', '#800000', '#556B2F'],
     jewelry: {
       recommended: ['Yellow gold', 'Bronze', 'Copper'],
       avoid: ['Silver', 'Platinum']
     }
   },
-  deep: {
-    tone: 'Deep',
+  tan: {
+    tone: 'Tan',
+    undertone: 'warm',
+    contrast: 'medium',
+    season: 'autumn',
+    description: 'Tan skin with warm undertones that looks stunning in rich, warm colors.',
+    characteristics: [
+      'Never burns, tans very easily',
+      'Golden undertone',
+      'Looks best in warm, rich colors',
+      'Excellent with gold jewelry'
+    ],
+    palette: ['#B8860B', '#CD853F', '#8B4513', '#A0522D', '#6B8E23', '#8B008B'],
+    jewelry: {
+      recommended: ['Yellow gold', 'Bronze', 'Copper'],
+      avoid: ['Silver', 'Platinum']
+    }
+  },
+  dark: {
+    tone: 'Dark',
     undertone: 'neutral',
     contrast: 'high',
     season: 'winter',
-    description: 'Deep skin tones create a perfect canvas for bold, vibrant colors and dramatic contrasts.',
+    description: 'Dark skin with neutral undertones that creates a perfect canvas for bold colors.',
     characteristics: [
-      'Vibrant colors create stunning visual impact',
-      'High contrast allows for dramatic color combinations',
-      'Can wear pure, bright colors confidently',
-      'Bold color blocking creates sophisticated looks'
+      'Never burns, deeply pigmented',
+      'Can wear both warm and cool colors',
+      'Looks amazing in bright, bold colors',
+      'Can wear any metal tone'
     ],
-    palette: [
-      '#FF0000', // Red
-      '#FFD700', // Gold
-      '#00FF00', // Lime
-      '#FF4500', // Orange Red
-      '#00FFFF', // Cyan
-      '#FF1493', // Deep Pink
-      '#FFFF00'  // Yellow
-    ],
+    palette: ['#FF0000', '#FFD700', '#00FF00', '#4169E1', '#FF1493', '#9400D3'],
     jewelry: {
-      recommended: ['Yellow gold', 'Rose gold', 'Bright metals'],
-      avoid: ['Pale metals', 'Oxidized silver']
+      recommended: ['Gold', 'Silver', 'Rose gold'],
+      avoid: ['Oxidized metals']
+    }
+  },
+  deep: {
+    tone: 'Deep',
+    undertone: 'cool',
+    contrast: 'high',
+    season: 'winter',
+    description: 'Deep skin with cool undertones that pairs beautifully with jewel tones and dramatic colors.',
+    characteristics: [
+      'Never burns, deeply pigmented',
+      'Looks best in jewel tones',
+      'Can wear the boldest colors',
+      'Stunning with silver jewelry'
+    ],
+    palette: ['#4B0082', '#800080', '#DC143C', '#006400', '#B22222', '#483D8B'],
+    jewelry: {
+      recommended: ['Silver', 'White gold', 'Platinum'],
+      avoid: ['Copper', 'Bronze']
     }
   }
 };

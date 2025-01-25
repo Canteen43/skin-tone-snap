@@ -30,7 +30,7 @@ const SkinToneAnalysis = ({ photos }: SkinToneAnalysisProps) => {
           photos.map(async (photo) => {
             const imageUrl = URL.createObjectURL(photo);
             const results = await classifier(imageUrl, {
-              top_k: 5, // Increased from 3 to 5 for more diverse predictions
+              top_k: 5, // Get top 5 predictions for more accurate analysis
             }) as ImageClassificationOutput;
             
             URL.revokeObjectURL(imageUrl);
@@ -39,8 +39,8 @@ const SkinToneAnalysis = ({ photos }: SkinToneAnalysisProps) => {
         );
         
         // Process all predictions to get the final result
-        const bestPrediction = processClassificationResults(predictions);
-        setAnalysis(SKIN_TONE_DATA[bestPrediction]);
+        const result = processClassificationResults(predictions);
+        setAnalysis(SKIN_TONE_DATA[result.skinTone]);
         
       } catch (error) {
         console.error('Error analyzing skin tone:', error);
