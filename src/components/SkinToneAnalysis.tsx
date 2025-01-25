@@ -56,37 +56,29 @@ const SkinToneAnalysis = ({ photo }: SkinToneAnalysisProps) => {
         setIsAnalyzing(true);
         console.log('Starting analysis...');
         
-        // Create a classifier with a general-purpose image classification model
         const classifier = await pipeline('image-classification', 'microsoft/resnet-50');
         console.log('Classifier created');
         
-        // Create an object URL for the uploaded photo
         const imageUrl = URL.createObjectURL(photo);
         console.log('Image URL created:', imageUrl);
         
-        // Perform the classification
         const result = await classifier(imageUrl, {
           top_k: 1,
         });
         console.log('Classification result:', result);
         
-        // Clean up the object URL
         URL.revokeObjectURL(imageUrl);
         
         let prediction: string;
         
-        if (Array.isArray(result) && result.length > 0) {
+        if (Array.isArray(result)) {
           console.log('Processing array result');
           const firstResult = result[0] as ClassificationResult;
-          // Map the classification result to a skin tone category
           prediction = mapResultToSkinTone(firstResult.label.toLowerCase());
-        } else if (typeof result === 'object' && 'label' in result) {
+        } else {
           console.log('Processing single result');
           const singleResult = result as ClassificationResult;
           prediction = mapResultToSkinTone(singleResult.label.toLowerCase());
-        } else {
-          console.log('Using default prediction');
-          prediction = 'medium';
         }
         
         console.log('Final prediction:', prediction);
@@ -106,7 +98,6 @@ const SkinToneAnalysis = ({ photo }: SkinToneAnalysisProps) => {
     }
   }, [photo]);
 
-  // Helper function to map classification results to skin tone categories
   const mapResultToSkinTone = (label: string): string => {
     if (label.includes('light') || label.includes('pale')) return 'fair';
     if (label.includes('medium') || label.includes('tan')) return 'medium';
