@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import PhotoUpload from '../components/PhotoUpload';
+import SkinToneAnalysis from '../components/SkinToneAnalysis';
 
 const Index = () => {
   const [photos, setPhotos] = useState<File[]>([]);
@@ -22,10 +23,10 @@ const Index = () => {
         />
 
         {photos.length > 0 && (
-          <div className="mt-8 text-center animate-fade-up">
-            <p className="text-gray-600">
-              {photos.length} photo{photos.length !== 1 ? 's' : ''} ready for analysis
-            </p>
+          <div className="mt-8 space-y-8 animate-fade-up">
+            {photos.map((photo, index) => (
+              <SkinToneAnalysis key={index} photo={photo} />
+            ))}
           </div>
         )}
       </div>
