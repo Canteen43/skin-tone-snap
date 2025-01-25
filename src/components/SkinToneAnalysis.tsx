@@ -54,35 +54,43 @@ const SkinToneAnalysis = ({ photo }: SkinToneAnalysisProps) => {
     const analyzeSkinTone = async () => {
       try {
         setIsAnalyzing(true);
+        console.log('Starting analysis...');
         
-        // Create a classifier with a specific model for skin tone classification
-        const classifier = await pipeline('image-classification', 'Xenova/skin-tone-classifier');
+        // Create a classifier with a general-purpose image classification model
+        const classifier = await pipeline('image-classification', 'microsoft/resnet-50');
+        console.log('Classifier created');
         
         // Create an object URL for the uploaded photo
         const imageUrl = URL.createObjectURL(photo);
+        console.log('Image URL created:', imageUrl);
         
         // Perform the classification
         const result = await classifier(imageUrl, {
-          top_k: 1, // Only get the top prediction
+          top_k: 1,
         });
-        
-        let prediction: string;
-        
-        if (Array.isArray(result) && result.length > 0) {
-          const firstResult = result[0] as ClassificationResult;
-          prediction = firstResult.score > 0.5 ? firstResult.label : 'medium';
-        } else if (!Array.isArray(result)) {
-          const singleResult = result as ClassificationResult;
-          prediction = singleResult.score > 0.5 ? singleResult.label : 'medium';
-        } else {
-          prediction = 'medium'; // Fallback to medium if no valid prediction
-        }
+        console.log('Classification result:', result);
         
         // Clean up the object URL
         URL.revokeObjectURL(imageUrl);
         
-        const predictionKey = prediction.toLowerCase();
-        setAnalysis(skinToneData[predictionKey] || skinToneData['medium']);
+        let prediction: string;
+        
+        if (Array.isArray(result) && result.length > 0) {
+          console.log('Processing array result');
+          const firstResult = result[0] as ClassificationResult;
+          // Map the classification result to a skin tone category
+          prediction = mapResultToSkinTone(firstResult.label.toLowerCase());
+        } else if (typeof result === 'object' && 'label' in result) {
+          console.log('Processing single result');
+          const singleResult = result as ClassificationResult;
+          prediction = mapResultToSkinTone(singleResult.label.toLowerCase());
+        } else {
+          console.log('Using default prediction');
+          prediction = 'medium';
+        }
+        
+        console.log('Final prediction:', prediction);
+        setAnalysis(skinToneData[prediction] || skinToneData['medium']);
         
       } catch (error) {
         console.error('Error analyzing skin tone:', error);
@@ -97,6 +105,15 @@ const SkinToneAnalysis = ({ photo }: SkinToneAnalysisProps) => {
       analyzeSkinTone();
     }
   }, [photo]);
+
+  // Helper function to map classification results to skin tone categories
+  const mapResultToSkinTone = (label: string): string => {
+    if (label.includes('light') || label.includes('pale')) return 'fair';
+    if (label.includes('medium') || label.includes('tan')) return 'medium';
+    if (label.includes('dark') || label.includes('deep')) return 'deep';
+    if (label.includes('olive')) return 'olive';
+    return 'medium'; // default fallback
+  };
 
   if (!analysis && !isAnalyzing) return null;
 
