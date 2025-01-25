@@ -73,7 +73,9 @@ const SkinToneAnalysis = ({ photos }: SkinToneAnalysisProps) => {
             });
             
             URL.revokeObjectURL(imageUrl);
-            return Array.isArray(results) ? results[0] : results;
+            // Ensure we're handling both single result and array of results
+            const firstResult = Array.isArray(results) ? results[0] : results;
+            return firstResult as ClassificationResult;
           })
         );
         
@@ -83,7 +85,7 @@ const SkinToneAnalysis = ({ photos }: SkinToneAnalysisProps) => {
         const predictionCounts: Record<string, { count: number, totalScore: number }> = {};
         
         predictions.forEach(prediction => {
-          if (prediction) {
+          if (prediction && prediction.label) {
             const mappedLabel = mapResultToSkinTone(prediction.label.toLowerCase());
             predictionCounts[mappedLabel] = predictionCounts[mappedLabel] || { count: 0, totalScore: 0 };
             predictionCounts[mappedLabel].count += 1;
