@@ -2,69 +2,13 @@ import React from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { pipeline } from '@huggingface/transformers';
 import { toast } from 'sonner';
+import { SkinToneInfo, ImageClassificationOutput } from '../types/skinTone';
+import { SKIN_TONE_DATA } from '../constants/skinTone';
+import { processClassificationResults } from '../utils/skinToneAnalysis';
 
 interface SkinToneAnalysisProps {
   photos: File[];
 }
-
-interface SkinToneInfo {
-  tone: string;
-  description: string;
-  palette: string[];
-}
-
-interface ClassificationResult {
-  label: string;
-  score: number;
-}
-
-type ImageClassificationSingle = ClassificationResult;
-type ImageClassificationOutput = ClassificationResult[];
-
-const CONFIDENCE_THRESHOLD = 0.3;
-
-const SKIN_TONE_MAPPINGS: Record<string, string[]> = {
-  fair: ['light', 'pale', 'fair', 'porcelain', 'ivory'],
-  light: ['beige', 'cream', 'neutral'],
-  medium: ['tan', 'medium', 'natural'],
-  olive: ['olive', 'golden', 'warm'],
-  deep: ['dark', 'deep', 'rich', 'ebony', 'mahogany']
-};
-
-const skinToneData: Record<string, SkinToneInfo> = {
-  fair: {
-    tone: 'Fair',
-    description: 'Fair skin tones have cool or neutral undertones and are more susceptible to sun damage. This skin type often has visible veins and burns easily.',
-    palette: ['#F5E6E0', '#E8B298', '#D77556', '#6B4423', '#8B0000']
-  },
-  light: {
-    tone: 'Light',
-    description: 'Light skin tones can have warm or cool undertones and may tan gradually. This skin type can handle moderate sun exposure but should still use protection.',
-    palette: ['#FFE4C4', '#DEB887', '#CD853F', '#8B4513', '#A0522D']
-  },
-  medium: {
-    tone: 'Medium',
-    description: 'Medium skin tones typically have warm or neutral undertones and tan easily. This versatile skin type can handle various colors and moderate sun exposure.',
-    palette: ['#E5C6B3', '#C19A6B', '#996515', '#6F4E37', '#3B2F2F']
-  },
-  olive: {
-    tone: 'Olive',
-    description: 'Olive skin tones have green or golden undertones and tan very easily. This skin type rarely burns and looks great in both warm and cool colors.',
-    palette: ['#BC8F8F', '#966919', '#808000', '#556B2F', '#2F4F4F']
-  },
-  deep: {
-    tone: 'Deep',
-    description: 'Deep skin tones have warm undertones and natural sun protection. This rich skin type looks stunning in bright colors and rarely burns.',
-    palette: ['#9E7B6B', '#8B4513', '#654321', '#3B2F2F', '#28282B']
-  }
-};
-
-const mapResultToSkinTone = (label: string): string => {
-  const normalizedLabel = label.toLowerCase();
-  return Object.entries(SKIN_TONE_MAPPINGS).find(
-    ([_, keywords]) => keywords.some(keyword => normalizedLabel.includes(keyword))
-  )?.[0] || 'medium';
-};
 
 const SkinToneAnalysis = ({ photos }: SkinToneAnalysisProps) => {
   const [analysis, setAnalysis] = React.useState<SkinToneInfo | null>(null);
@@ -93,37 +37,8 @@ const SkinToneAnalysis = ({ photos }: SkinToneAnalysisProps) => {
           })
         );
         
-        const validPredictions = predictions
-          .flat()
-          .filter((pred): pred is ClassificationResult => 
-            pred && typeof pred.score === 'number' && pred.score >= CONFIDENCE_THRESHOLD
-          );
-        
-        if (validPredictions.length === 0) {
-          toast.error('Unable to determine skin tone with confidence. Please try with different photos.');
-          setError(true);
-          return;
-        }
-
-        const predictionScores = validPredictions.reduce((acc, prediction) => {
-          const mappedLabel = mapResultToSkinTone(prediction.label);
-          if (!acc[mappedLabel]) {
-            acc[mappedLabel] = { totalScore: 0, count: 0 };
-          }
-          acc[mappedLabel].totalScore += prediction.score * prediction.score;
-          acc[mappedLabel].count += 1;
-          return acc;
-        }, {} as Record<string, { totalScore: number; count: number }>);
-        
-        const [bestPrediction] = Object.entries(predictionScores).reduce(
-          ([bestLabel, highestScore], [label, { totalScore, count }]) => {
-            const weightedAverage = totalScore / count;
-            return weightedAverage > highestScore ? [label, weightedAverage] : [bestLabel, highestScore];
-          },
-          ['medium', 0] as [string, number]
-        );
-        
-        setAnalysis(skinToneData[bestPrediction]);
+        const bestPrediction = processClassificationResults(predictions);
+        setAnalysis(SKIN_TONE_DATA[bestPrediction]);
         
       } catch (error) {
         console.error('Error analyzing skin tone:', error);
