@@ -23,7 +23,15 @@ export const SKIN_TONE_DATA: Record<string, SkinToneInfo> = {
       'Freckles may be present',
       'Often accompanied by light eyes'
     ],
-    palette: ['#E8EFF5', '#D5E0EA', '#B4C7D9', '#93AFCC', '#7297BF'],
+    palette: [
+      '#87CEEB', // Sky Blue
+      '#E6E6FA', // Lavender
+      '#98FB98', // Pale Green
+      '#FFB6C1', // Light Pink
+      '#B0C4DE', // Light Steel Blue
+      '#DDA0DD', // Plum
+      '#F0F8FF'  // Alice Blue
+    ],
     jewelry: {
       recommended: ['Silver', 'Platinum', 'White gold', 'Pearl'],
       avoid: ['Yellow gold', 'Copper', 'Bronze']
@@ -41,7 +49,15 @@ export const SKIN_TONE_DATA: Record<string, SkinToneInfo> = {
       'Natural flush may be present',
       'Versatile with most colors'
     ],
-    palette: ['#FFE4C4', '#DEB887', '#CD853F', '#8B4513', '#A0522D'],
+    palette: [
+      '#FF69B4', // Hot Pink
+      '#4169E1', // Royal Blue
+      '#32CD32', // Lime Green
+      '#FF8C00', // Dark Orange
+      '#BA55D3', // Medium Orchid
+      '#20B2AA', // Light Sea Green
+      '#FFD700'  // Gold
+    ],
     jewelry: {
       recommended: ['Mixed metals', 'Rose gold', 'Sterling silver'],
       avoid: ['Overly oxidized metals']
@@ -59,7 +75,15 @@ export const SKIN_TONE_DATA: Record<string, SkinToneInfo> = {
       'Even complexion',
       'Rarely burns'
     ],
-    palette: ['#E5C6B3', '#C19A6B', '#996515', '#6F4E37', '#3B2F2F'],
+    palette: [
+      '#8B4513', // Saddle Brown
+      '#DAA520', // Goldenrod
+      '#228B22', // Forest Green
+      '#CD853F', // Peru
+      '#B8860B', // Dark Goldenrod
+      '#800000', // Maroon
+      '#556B2F'  // Dark Olive Green
+    ],
     jewelry: {
       recommended: ['Yellow gold', 'Rose gold', 'Copper', 'Bronze'],
       avoid: ['Platinum', 'White metals']
@@ -77,7 +101,15 @@ export const SKIN_TONE_DATA: Record<string, SkinToneInfo> = {
       'Mediterranean or Asian heritage common',
       'Looks great in jewel tones'
     ],
-    palette: ['#BC8F8F', '#966919', '#808000', '#556B2F', '#2F4F4F'],
+    palette: [
+      '#4B0082', // Indigo
+      '#800080', // Purple
+      '#DC143C', // Crimson
+      '#006400', // Dark Green
+      '#B22222', // Fire Brick
+      '#483D8B', // Dark Slate Blue
+      '#8B008B'  // Dark Magenta
+    ],
     jewelry: {
       recommended: ['Yellow gold', 'Bronze', 'Copper'],
       avoid: ['Silver', 'Platinum']
@@ -95,7 +127,15 @@ export const SKIN_TONE_DATA: Record<string, SkinToneInfo> = {
       'Natural sun protection',
       'Looks amazing in bright colors'
     ],
-    palette: ['#9E7B6B', '#8B4513', '#654321', '#3B2F2F', '#28282B'],
+    palette: [
+      '#FF0000', // Red
+      '#FFD700', // Gold
+      '#00FF00', // Lime
+      '#FF4500', // Orange Red
+      '#00FFFF', // Cyan
+      '#FF1493', // Deep Pink
+      '#FFFF00'  // Yellow
+    ],
     jewelry: {
       recommended: ['Yellow gold', 'Rose gold', 'Bright metals'],
       avoid: ['Pale metals', 'Oxidized silver']
