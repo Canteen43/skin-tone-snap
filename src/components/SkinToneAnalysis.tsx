@@ -49,11 +49,13 @@ const skinToneData: Record<string, SkinToneInfo> = {
 const SkinToneAnalysis = ({ photo }: SkinToneAnalysisProps) => {
   const [analysis, setAnalysis] = React.useState<SkinToneInfo | null>(null);
   const [isAnalyzing, setIsAnalyzing] = React.useState(false);
+  const [error, setError] = React.useState<boolean>(false);
 
   React.useEffect(() => {
     const analyzeSkinTone = async () => {
       try {
         setIsAnalyzing(true);
+        setError(false);
         console.log('Starting analysis...');
         
         const classifier = await pipeline('image-classification', 'microsoft/resnet-50');
@@ -86,6 +88,7 @@ const SkinToneAnalysis = ({ photo }: SkinToneAnalysisProps) => {
         
       } catch (error) {
         console.error('Error analyzing skin tone:', error);
+        setError(true);
         toast.error('Error analyzing skin tone. Please try again.');
         setAnalysis(null);
       } finally {
@@ -103,19 +106,34 @@ const SkinToneAnalysis = ({ photo }: SkinToneAnalysisProps) => {
     if (label.includes('medium') || label.includes('tan')) return 'medium';
     if (label.includes('dark') || label.includes('deep')) return 'deep';
     if (label.includes('olive')) return 'olive';
-    return 'medium'; // default fallback
+    return 'medium';
   };
+
+  if (!analysis && !isAnalyzing && error) {
+    return (
+      <Card className="w-full animate-fade-up">
+        <CardHeader>
+          <CardTitle className="text-2xl font-bold text-center text-gray-800">
+            Too pretty to analyze! 😊
+          </CardTitle>
+          <CardDescription className="text-center text-gray-600">
+            Our AI was overwhelmed by your beauty. Please try again.
+          </CardDescription>
+        </CardHeader>
+      </Card>
+    );
+  }
 
   if (!analysis && !isAnalyzing) return null;
 
   return (
-    <Card className="w-full max-w-md mx-auto mt-6 animate-fade-up">
+    <Card className="w-full animate-fade-up">
       <CardHeader>
         <CardTitle className="text-2xl font-bold text-center">
           {isAnalyzing ? 'Analyzing...' : analysis?.tone}
         </CardTitle>
         {!isAnalyzing && (
-          <CardDescription className="text-center text-gray-600">
+          <CardDescription className="text-center">
             {analysis?.description}
           </CardDescription>
         )}
