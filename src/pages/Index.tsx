@@ -15,7 +15,7 @@ const Index = () => {
                 Skin Tone Analysis
               </h1>
               <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-                Upload your photos for a detailed analysis of your skin tone. Our AI will help you understand your unique complexion.
+                Upload multiple photos for a more accurate analysis of your skin tone. Our AI will analyze all photos to determine your unique complexion.
               </p>
             </div>
 
@@ -27,23 +27,23 @@ const Index = () => {
         ) : (
           <div className="grid md:grid-cols-2 gap-8 animate-fade-up">
             <div className="space-y-4">
-              <h2 className="text-2xl font-semibold text-gray-900">Your Photo</h2>
-              {photos.map((photo, index) => (
-                <div key={index} className="rounded-lg overflow-hidden shadow-lg">
-                  <img
-                    src={URL.createObjectURL(photo)}
-                    alt="Uploaded photo"
-                    className="w-full h-auto object-cover"
-                    onLoad={(e) => URL.revokeObjectURL((e.target as HTMLImageElement).src)}
-                  />
-                </div>
-              ))}
+              <h2 className="text-2xl font-semibold text-gray-900">Your Photos</h2>
+              <div className="grid gap-4">
+                {photos.map((photo, index) => (
+                  <div key={index} className="rounded-lg overflow-hidden shadow-lg">
+                    <img
+                      src={URL.createObjectURL(photo)}
+                      alt={`Uploaded photo ${index + 1}`}
+                      className="w-full h-auto object-cover"
+                      onLoad={(e) => URL.revokeObjectURL((e.target as HTMLImageElement).src)}
+                    />
+                  </div>
+                ))}
+              </div>
             </div>
             <div>
               <h2 className="text-2xl font-semibold text-gray-900 mb-4">Analysis Results</h2>
-              {photos.map((photo, index) => (
-                <SkinToneAnalysis key={index} photo={photo} />
-              ))}
+              <SkinToneAnalysis photos={photos} />
             </div>
           </div>
         )}

@@ -4,7 +4,7 @@ import { pipeline } from '@huggingface/transformers';
 import { toast } from 'sonner';
 
 interface SkinToneAnalysisProps {
-  photo: File;
+  photos: File[];
 }
 
 interface SkinToneInfo {
@@ -46,45 +46,67 @@ const skinToneData: Record<string, SkinToneInfo> = {
   }
 };
 
-const SkinToneAnalysis = ({ photo }: SkinToneAnalysisProps) => {
+const SkinToneAnalysis = ({ photos }: SkinToneAnalysisProps) => {
   const [analysis, setAnalysis] = React.useState<SkinToneInfo | null>(null);
   const [isAnalyzing, setIsAnalyzing] = React.useState(false);
   const [error, setError] = React.useState<boolean>(false);
 
   React.useEffect(() => {
     const analyzeSkinTone = async () => {
+      if (photos.length === 0) return;
+      
       try {
         setIsAnalyzing(true);
         setError(false);
-        console.log('Starting analysis...');
+        console.log('Starting analysis of multiple photos...');
         
         const classifier = await pipeline('image-classification', 'Xenova/vit-base-patch16-224');
         console.log('Classifier created');
         
-        const imageUrl = URL.createObjectURL(photo);
-        console.log('Image URL created:', imageUrl);
+        const predictions = await Promise.all(
+          photos.map(async (photo) => {
+            const imageUrl = URL.createObjectURL(photo);
+            console.log('Processing image:', imageUrl);
+            
+            const result = await classifier(imageUrl, {
+              top_k: 1,
+            });
+            
+            URL.revokeObjectURL(imageUrl);
+            return result;
+          })
+        );
         
-        const result = await classifier(imageUrl, {
-          top_k: 1,
+        console.log('All classification results:', predictions);
+        
+        // Calculate the most common prediction
+        const predictionCounts: Record<string, { count: number, totalScore: number }> = {};
+        
+        predictions.forEach(result => {
+          if (Array.isArray(result)) {
+            const prediction = mapResultToSkinTone(result[0].label.toLowerCase());
+            predictionCounts[prediction] = predictionCounts[prediction] || { count: 0, totalScore: 0 };
+            predictionCounts[prediction].count += 1;
+            predictionCounts[prediction].totalScore += result[0].score;
+          }
         });
-        console.log('Classification result:', result);
         
-        URL.revokeObjectURL(imageUrl);
+        // Find the prediction with highest count and average score
+        let bestPrediction = 'medium';
+        let maxCount = 0;
+        let highestAvgScore = 0;
         
-        let prediction: string;
+        Object.entries(predictionCounts).forEach(([prediction, { count, totalScore }]) => {
+          const avgScore = totalScore / count;
+          if (count > maxCount || (count === maxCount && avgScore > highestAvgScore)) {
+            bestPrediction = prediction;
+            maxCount = count;
+            highestAvgScore = avgScore;
+          }
+        });
         
-        if (Array.isArray(result)) {
-          console.log('Processing array result');
-          const firstResult = result[0] as ClassificationResult;
-          prediction = mapResultToSkinTone(firstResult.label.toLowerCase());
-        } else {
-          console.log('Processing single result');
-          const singleResult = result as ClassificationResult;
-          prediction = mapResultToSkinTone(singleResult.label.toLowerCase());
-        }
-        
-        console.log('Final prediction:', prediction);
-        setAnalysis(skinToneData[prediction] || skinToneData['medium']);
+        console.log('Final combined prediction:', bestPrediction);
+        setAnalysis(skinToneData[bestPrediction] || skinToneData['medium']);
         
       } catch (error) {
         console.error('Error analyzing skin tone:', error);
@@ -96,10 +118,8 @@ const SkinToneAnalysis = ({ photo }: SkinToneAnalysisProps) => {
       }
     };
 
-    if (photo) {
-      analyzeSkinTone();
-    }
-  }, [photo]);
+    analyzeSkinTone();
+  }, [photos]);
 
   const mapResultToSkinTone = (label: string): string => {
     if (label.includes('light') || label.includes('pale')) return 'fair';
@@ -130,7 +150,7 @@ const SkinToneAnalysis = ({ photo }: SkinToneAnalysisProps) => {
     <Card className="w-full animate-fade-up">
       <CardHeader>
         <CardTitle className="text-2xl font-bold text-center">
-          {isAnalyzing ? 'Analyzing...' : analysis?.tone}
+          {isAnalyzing ? `Analyzing ${photos.length} photos...` : analysis?.tone}
         </CardTitle>
         {!isAnalyzing && (
           <CardDescription className="text-center">
