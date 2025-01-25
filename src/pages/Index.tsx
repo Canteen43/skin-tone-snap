@@ -27,7 +27,7 @@ const Index = () => {
     toast.success('Photo removed');
   };
 
-  const handlePredictions = (predictions: ImageClassificationOutput[], index: number) => {
+  const handlePredictions = (predictions: ImageClassificationOutput, index: number) => {
     setPhotosWithPredictions(prev => {
       const updated = [...prev];
       updated[index] = { ...updated[index], predictions };
