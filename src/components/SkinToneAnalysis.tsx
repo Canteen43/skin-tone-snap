@@ -63,7 +63,7 @@ const SkinToneAnalysis = ({ photo }: SkinToneAnalysisProps) => {
         
         // Perform the classification
         const result = await classifier(imageUrl, {
-          topk: 1, // Only get the top prediction
+          top_k: 1, // Only get the top prediction
         });
         
         let prediction: string;
