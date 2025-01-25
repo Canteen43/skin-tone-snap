@@ -36,9 +36,9 @@ const SkinToneAnalysis = ({ photos, onPredictions }: SkinToneAnalysisProps) => {
           photos.map(async (photo, index) => {
             const imageUrl = URL.createObjectURL(photo);
             
-            // Get predictions for all our keywords
+            // Get predictions using the classifier
             const results = await classifier(imageUrl, {
-              labels: skinToneLabels.map(label => label.keyword),
+              topk: skinToneLabels.length,
             }) as ImageClassificationOutput;
             
             URL.revokeObjectURL(imageUrl);
