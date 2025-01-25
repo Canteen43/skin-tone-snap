@@ -25,11 +25,12 @@ const SkinToneAnalysis = ({ photos }: SkinToneAnalysisProps) => {
         
         const classifier = await pipeline('image-classification', 'Xenova/vit-base-patch16-224');
         
+        // Process each photo and get multiple predictions
         const predictions = await Promise.all(
           photos.map(async (photo) => {
             const imageUrl = URL.createObjectURL(photo);
             const results = await classifier(imageUrl, {
-              top_k: 3,
+              top_k: 5, // Increased from 3 to 5 for more diverse predictions
             }) as ImageClassificationOutput;
             
             URL.revokeObjectURL(imageUrl);
@@ -37,6 +38,7 @@ const SkinToneAnalysis = ({ photos }: SkinToneAnalysisProps) => {
           })
         );
         
+        // Process all predictions to get the final result
         const bestPrediction = processClassificationResults(predictions);
         setAnalysis(SKIN_TONE_DATA[bestPrediction]);
         
