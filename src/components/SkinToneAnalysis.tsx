@@ -8,9 +8,10 @@ import { processClassificationResults } from '../utils/skinToneAnalysis';
 
 interface SkinToneAnalysisProps {
   photos: File[];
+  onPredictions?: (predictions: ImageClassificationOutput, index: number) => void;
 }
 
-const SkinToneAnalysis = ({ photos }: SkinToneAnalysisProps) => {
+const SkinToneAnalysis = ({ photos, onPredictions }: SkinToneAnalysisProps) => {
   const [analysis, setAnalysis] = React.useState<SkinToneInfo | null>(null);
   const [isAnalyzing, setIsAnalyzing] = React.useState(false);
   const [error, setError] = React.useState<boolean>(false);
@@ -27,13 +28,17 @@ const SkinToneAnalysis = ({ photos }: SkinToneAnalysisProps) => {
         
         // Process each photo and get multiple predictions
         const predictions = await Promise.all(
-          photos.map(async (photo) => {
+          photos.map(async (photo, index) => {
             const imageUrl = URL.createObjectURL(photo);
             const results = await classifier(imageUrl, {
               top_k: 5, // Get top 5 predictions for more accurate analysis
             }) as ImageClassificationOutput;
             
             URL.revokeObjectURL(imageUrl);
+            
+            // Send predictions back to parent component
+            onPredictions?.(results, index);
+            
             return results;
           })
         );
@@ -52,7 +57,7 @@ const SkinToneAnalysis = ({ photos }: SkinToneAnalysisProps) => {
     };
 
     analyzeSkinTone();
-  }, [photos]);
+  }, [photos, onPredictions]);
 
   if (!analysis && !isAnalyzing && error) {
     return (
