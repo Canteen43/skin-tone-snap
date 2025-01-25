@@ -4,11 +4,29 @@ import { SKIN_TONE_MAPPINGS, UNDERTONE_MAPPINGS, SEASON_CHARACTERISTICS, CONFIDE
 export const mapResultToSkinTone = (label: string): string => {
   const normalizedLabel = label.toLowerCase();
   
+  // Enhanced logic for darker skin tones
+  if (normalizedLabel.includes('black') || 
+      normalizedLabel.includes('ebony') || 
+      normalizedLabel.includes('dark-skinned')) {
+    return 'deep';
+  }
+  
+  if (normalizedLabel.includes('dark') || 
+      normalizedLabel.includes('brown') || 
+      normalizedLabel.includes('rich')) {
+    return 'dark';
+  }
+  
   // Check each skin tone category for matches
   for (const [tone, keywords] of Object.entries(SKIN_TONE_MAPPINGS)) {
     if (keywords.some(keyword => normalizedLabel.includes(keyword))) {
       return tone;
     }
+  }
+  
+  // Enhanced fallback logic based on specific keywords
+  if (normalizedLabel.includes('melanin') || normalizedLabel.includes('african')) {
+    return 'dark';
   }
   
   return 'medium'; // Default fallback
@@ -59,14 +77,14 @@ export const processClassificationResults = (predictions: ImageClassificationOut
     throw new Error('No valid predictions found');
   }
 
-  // Analyze each prediction and collect results
+  // Enhanced analysis for multiple predictions
   const results = validPredictions.map(prediction => ({
     skinTone: mapResultToSkinTone(prediction.label),
     confidence: prediction.score,
     label: prediction.label
   }));
 
-  // Aggregate results
+  // Weight darker tones more heavily in the final analysis
   const skinToneScores: Record<string, { total: number; count: number }> = {};
   const labels: string[] = [];
 
@@ -74,7 +92,9 @@ export const processClassificationResults = (predictions: ImageClassificationOut
     if (!skinToneScores[result.skinTone]) {
       skinToneScores[result.skinTone] = { total: 0, count: 0 };
     }
-    skinToneScores[result.skinTone].total += result.confidence;
+    // Apply higher weight to darker tone predictions
+    const weight = ['dark', 'deep'].includes(result.skinTone) ? 1.5 : 1;
+    skinToneScores[result.skinTone].total += result.confidence * weight;
     skinToneScores[result.skinTone].count += 1;
     labels.push(result.label);
   });
@@ -88,11 +108,9 @@ export const processClassificationResults = (predictions: ImageClassificationOut
     ['medium', 0] as [string, number]
   );
 
-  // Determine undertone and season
   const undertone = determineUndertone(labels);
   const season = determineSeason(bestSkinTone, undertone);
 
-  // Calculate overall confidence
   const overallConfidence = Object.values(skinToneScores).reduce(
     (acc, { total, count }) => acc + (total / count),
     0

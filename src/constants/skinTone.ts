@@ -3,13 +3,13 @@ import { SkinToneInfo } from '../types/skinTone';
 export const CONFIDENCE_THRESHOLD = 0.3;
 
 export const SKIN_TONE_MAPPINGS: Record<string, string[]> = {
-  light: ['light', 'pale', 'porcelain', 'ivory'],
-  fair: ['fair', 'beige', 'cream'],
-  medium: ['medium', 'natural', 'neutral'],
-  olive: ['olive', 'golden'],
-  tan: ['tan', 'warm', 'honey'],
-  dark: ['dark', 'rich', 'brown'],
-  deep: ['deep', 'ebony', 'mahogany']
+  light: ['light', 'pale', 'porcelain', 'ivory', 'fair-light'],
+  fair: ['fair', 'beige', 'cream', 'medium-light'],
+  medium: ['medium', 'natural', 'neutral', 'beige-medium'],
+  olive: ['olive', 'golden', 'warm-medium'],
+  tan: ['tan', 'warm', 'honey', 'caramel'],
+  dark: ['dark', 'rich', 'brown', 'deep-brown', 'chocolate'],
+  deep: ['deep', 'ebony', 'mahogany', 'black']
 };
 
 export const UNDERTONE_MAPPINGS: Record<string, string[]> = {
@@ -116,40 +116,41 @@ export const SKIN_TONE_DATA: Record<string, SkinToneInfo> = {
       avoid: ['Silver', 'Platinum']
     }
   },
+  
   dark: {
     tone: 'Dark',
     undertone: 'neutral',
     contrast: 'high',
     season: 'winter',
-    description: 'Dark skin with neutral undertones that creates a perfect canvas for bold colors.',
+    description: 'Rich, dark skin tone that creates a perfect canvas for bold, vibrant colors.',
     characteristics: [
       'Never burns, deeply pigmented',
-      'Can wear both warm and cool colors',
-      'Looks amazing in bright, bold colors',
-      'Can wear any metal tone'
+      'Natural richness and depth in skin tone',
+      'Looks stunning in bright, bold colors',
+      'Can wear any metal tone beautifully'
     ],
     palette: ['#FF0000', '#FFD700', '#00FF00', '#4169E1', '#FF1493', '#9400D3'],
     jewelry: {
-      recommended: ['Gold', 'Silver', 'Rose gold'],
+      recommended: ['Gold', 'Silver', 'Rose gold', 'Platinum'],
       avoid: ['Oxidized metals']
     }
   },
   deep: {
     tone: 'Deep',
-    undertone: 'cool',
+    undertone: 'neutral',
     contrast: 'high',
     season: 'winter',
-    description: 'Deep skin with cool undertones that pairs beautifully with jewel tones and dramatic colors.',
+    description: 'Deep, rich skin tone that pairs beautifully with jewel tones and dramatic colors.',
     characteristics: [
       'Never burns, deeply pigmented',
-      'Looks best in jewel tones',
-      'Can wear the boldest colors',
-      'Stunning with silver jewelry'
+      'Rich, deep natural skin tone',
+      'Looks magnificent in jewel tones',
+      'Creates stunning contrast with bright colors'
     ],
     palette: ['#4B0082', '#800080', '#DC143C', '#006400', '#B22222', '#483D8B'],
     jewelry: {
-      recommended: ['Silver', 'White gold', 'Platinum'],
-      avoid: ['Copper', 'Bronze']
+      recommended: ['Gold', 'Silver', 'Platinum'],
+      avoid: ['Dull or oxidized metals']
     }
   }
 };
