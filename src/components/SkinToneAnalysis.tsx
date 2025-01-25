@@ -68,12 +68,12 @@ const SkinToneAnalysis = ({ photos }: SkinToneAnalysisProps) => {
             const imageUrl = URL.createObjectURL(photo);
             console.log('Processing image:', imageUrl);
             
-            const result = await classifier(imageUrl, {
+            const results = await classifier(imageUrl, {
               top_k: 1,
             });
             
             URL.revokeObjectURL(imageUrl);
-            return result;
+            return Array.isArray(results) ? results[0] : results;
           })
         );
         
@@ -82,12 +82,12 @@ const SkinToneAnalysis = ({ photos }: SkinToneAnalysisProps) => {
         // Calculate the most common prediction
         const predictionCounts: Record<string, { count: number, totalScore: number }> = {};
         
-        predictions.forEach(result => {
-          if (Array.isArray(result)) {
-            const prediction = mapResultToSkinTone(result[0].label.toLowerCase());
-            predictionCounts[prediction] = predictionCounts[prediction] || { count: 0, totalScore: 0 };
-            predictionCounts[prediction].count += 1;
-            predictionCounts[prediction].totalScore += result[0].score;
+        predictions.forEach(prediction => {
+          if (prediction) {
+            const mappedLabel = mapResultToSkinTone(prediction.label.toLowerCase());
+            predictionCounts[mappedLabel] = predictionCounts[mappedLabel] || { count: 0, totalScore: 0 };
+            predictionCounts[mappedLabel].count += 1;
+            predictionCounts[mappedLabel].totalScore += prediction.score;
           }
         });
         
