@@ -13,6 +13,11 @@ interface SkinToneInfo {
   palette: string[];
 }
 
+interface ClassificationResult {
+  label: string;
+  score: number;
+}
+
 const skinToneData: Record<string, SkinToneInfo> = {
   'fair': {
     tone: 'Fair',
@@ -53,10 +58,15 @@ const SkinToneAnalysis = ({ photo }: SkinToneAnalysisProps) => {
         const imageUrl = URL.createObjectURL(photo);
         const result = await classifier(imageUrl);
         
-        // Handle both array and single result outputs
-        const prediction = Array.isArray(result) 
-          ? result[0].score > 0.5 ? result[0].label : 'medium'
-          : result.score > 0.5 ? result.label : 'medium';
+        let prediction: string;
+        
+        if (Array.isArray(result)) {
+          const firstResult = result[0] as ClassificationResult;
+          prediction = firstResult.score > 0.5 ? firstResult.label : 'medium';
+        } else {
+          const singleResult = result as ClassificationResult;
+          prediction = singleResult.score > 0.5 ? singleResult.label : 'medium';
+        }
         
         const predictionKey = prediction.toLowerCase();
         setAnalysis(skinToneData[predictionKey] || skinToneData['medium']);
