@@ -13,27 +13,92 @@ export const SKIN_TONE_MAPPINGS: Record<string, string[]> = {
 export const SKIN_TONE_DATA: Record<string, SkinToneInfo> = {
   fair: {
     tone: 'Fair',
-    description: 'Fair skin tones have cool or neutral undertones and are more susceptible to sun damage. This skin type often has visible veins and burns easily.',
-    palette: ['#F5E6E0', '#E8B298', '#D77556', '#6B4423', '#8B0000']
+    undertone: 'cool',
+    contrast: 'high',
+    season: 'summer',
+    description: 'Fair skin typically burns easily and has visible veins. The complexion is often described as porcelain or ivory.',
+    characteristics: [
+      'Burns easily, rarely tans',
+      'Visible veins with blue/purple undertones',
+      'Freckles may be present',
+      'Often accompanied by light eyes'
+    ],
+    palette: ['#E8EFF5', '#D5E0EA', '#B4C7D9', '#93AFCC', '#7297BF'],
+    jewelry: {
+      recommended: ['Silver', 'Platinum', 'White gold', 'Pearl'],
+      avoid: ['Yellow gold', 'Copper', 'Bronze']
+    }
   },
   light: {
     tone: 'Light',
-    description: 'Light skin tones can have warm or cool undertones and may tan gradually. This skin type can handle moderate sun exposure but should still use protection.',
-    palette: ['#FFE4C4', '#DEB887', '#CD853F', '#8B4513', '#A0522D']
+    undertone: 'neutral',
+    contrast: 'medium',
+    season: 'spring',
+    description: 'Light skin has both warm and cool undertones, offering versatility in color choices. This skin type can gradually tan.',
+    characteristics: [
+      'Sometimes burns, gradually tans',
+      'Neutral undertones',
+      'Natural flush may be present',
+      'Versatile with most colors'
+    ],
+    palette: ['#FFE4C4', '#DEB887', '#CD853F', '#8B4513', '#A0522D'],
+    jewelry: {
+      recommended: ['Mixed metals', 'Rose gold', 'Sterling silver'],
+      avoid: ['Overly oxidized metals']
+    }
   },
   medium: {
     tone: 'Medium',
-    description: 'Medium skin tones typically have warm or neutral undertones and tan easily. This versatile skin type can handle various colors and moderate sun exposure.',
-    palette: ['#E5C6B3', '#C19A6B', '#996515', '#6F4E37', '#3B2F2F']
+    undertone: 'warm',
+    contrast: 'medium',
+    season: 'autumn',
+    description: 'Medium skin tones typically have warm or neutral undertones and tan easily. This versatile skin type works well with earth tones.',
+    characteristics: [
+      'Tans easily',
+      'Warm golden undertones',
+      'Even complexion',
+      'Rarely burns'
+    ],
+    palette: ['#E5C6B3', '#C19A6B', '#996515', '#6F4E37', '#3B2F2F'],
+    jewelry: {
+      recommended: ['Yellow gold', 'Rose gold', 'Copper', 'Bronze'],
+      avoid: ['Platinum', 'White metals']
+    }
   },
   olive: {
     tone: 'Olive',
-    description: 'Olive skin tones have green or golden undertones and tan very easily. This skin type rarely burns and looks great in both warm and cool colors.',
-    palette: ['#BC8F8F', '#966919', '#808000', '#556B2F', '#2F4F4F']
+    undertone: 'warm',
+    contrast: 'low',
+    season: 'autumn',
+    description: 'Olive skin has distinct green or golden undertones and tans very easily. This skin type looks particularly striking in jewel tones.',
+    characteristics: [
+      'Tans very easily, rarely burns',
+      'Green or golden undertones',
+      'Mediterranean or Asian heritage common',
+      'Looks great in jewel tones'
+    ],
+    palette: ['#BC8F8F', '#966919', '#808000', '#556B2F', '#2F4F4F'],
+    jewelry: {
+      recommended: ['Yellow gold', 'Bronze', 'Copper'],
+      avoid: ['Silver', 'Platinum']
+    }
   },
   deep: {
     tone: 'Deep',
-    description: 'Deep skin tones have warm undertones and natural sun protection. This rich skin type looks stunning in bright colors and rarely burns.',
-    palette: ['#9E7B6B', '#8B4513', '#654321', '#3B2F2F', '#28282B']
+    undertone: 'neutral',
+    contrast: 'high',
+    season: 'winter',
+    description: 'Deep skin tones have rich, warm undertones and natural sun protection. This skin type looks stunning in bright, vibrant colors.',
+    characteristics: [
+      'Never burns',
+      'Rich, warm undertones',
+      'Natural sun protection',
+      'Looks amazing in bright colors'
+    ],
+    palette: ['#9E7B6B', '#8B4513', '#654321', '#3B2F2F', '#28282B'],
+    jewelry: {
+      recommended: ['Yellow gold', 'Rose gold', 'Bright metals'],
+      avoid: ['Pale metals', 'Oxidized silver']
+    }
   }
 };

@@ -76,13 +76,38 @@ const SkinToneAnalysis = ({ photos }: SkinToneAnalysisProps) => {
           {isAnalyzing ? `Analyzing ${photos.length} photos...` : analysis?.tone}
         </CardTitle>
         {!isAnalyzing && (
-          <CardDescription className="text-center">
-            {analysis?.description}
-          </CardDescription>
+          <>
+            <CardDescription className="text-center mb-4">
+              {analysis?.description}
+            </CardDescription>
+            <div className="grid grid-cols-2 gap-4 text-sm text-gray-600">
+              <div>
+                <p className="font-semibold">Undertone:</p>
+                <p className="capitalize">{analysis?.undertone}</p>
+              </div>
+              <div>
+                <p className="font-semibold">Season:</p>
+                <p className="capitalize">{analysis?.season}</p>
+              </div>
+              <div>
+                <p className="font-semibold">Contrast:</p>
+                <p className="capitalize">{analysis?.contrast}</p>
+              </div>
+            </div>
+          </>
         )}
       </CardHeader>
       {!isAnalyzing && analysis && (
-        <CardContent>
+        <CardContent className="space-y-6">
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-gray-800">Characteristics</h3>
+            <ul className="list-disc list-inside space-y-2 text-gray-600">
+              {analysis.characteristics.map((trait, index) => (
+                <li key={index}>{trait}</li>
+              ))}
+            </ul>
+          </div>
+
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-gray-800">Recommended Color Palette</h3>
             <div className="flex justify-center gap-2">
@@ -94,6 +119,28 @@ const SkinToneAnalysis = ({ photos }: SkinToneAnalysisProps) => {
                   title={color}
                 />
               ))}
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-gray-800">Jewelry Recommendations</h3>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <p className="font-medium text-gray-700 mb-2">Recommended:</p>
+                <ul className="list-disc list-inside space-y-1 text-gray-600">
+                  {analysis.jewelry.recommended.map((item, index) => (
+                    <li key={index}>{item}</li>
+                  ))}
+                </ul>
+              </div>
+              <div>
+                <p className="font-medium text-gray-700 mb-2">Avoid:</p>
+                <ul className="list-disc list-inside space-y-1 text-gray-600">
+                  {analysis.jewelry.avoid.map((item, index) => (
+                    <li key={index}>{item}</li>
+                  ))}
+                </ul>
+              </div>
             </div>
           </div>
         </CardContent>
