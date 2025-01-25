@@ -18,6 +18,8 @@ interface ClassificationResult {
   score: number;
 }
 
+const CONFIDENCE_THRESHOLD = 0.3; // Minimum confidence score to consider a prediction
+
 const skinToneData: Record<string, SkinToneInfo> = {
   'fair': {
     tone: 'Fair',
@@ -68,46 +70,56 @@ const SkinToneAnalysis = ({ photos }: SkinToneAnalysisProps) => {
             const imageUrl = URL.createObjectURL(photo);
             console.log('Processing image:', imageUrl);
             
+            // Get multiple predictions per image
             const results = await classifier(imageUrl, {
-              top_k: 1,
+              top_k: 3, // Get top 3 predictions per image
             });
             
             URL.revokeObjectURL(imageUrl);
-            // Ensure we're handling both single result and array of results
-            const firstResult = Array.isArray(results) ? results[0] : results;
-            return firstResult as ClassificationResult;
+            return Array.isArray(results) ? results : [results];
           })
         );
         
         console.log('All classification results:', predictions);
         
-        // Calculate the most common prediction
-        const predictionCounts: Record<string, { count: number, totalScore: number }> = {};
+        // Flatten predictions and filter by confidence
+        const validPredictions = predictions
+          .flat()
+          .filter(pred => pred.score >= CONFIDENCE_THRESHOLD);
         
-        predictions.forEach(prediction => {
+        if (validPredictions.length === 0) {
+          console.log('No predictions met the confidence threshold');
+          toast.error('Unable to determine skin tone with confidence. Please try with different photos.');
+          setError(true);
+          return;
+        }
+
+        // Calculate weighted predictions
+        const predictionScores: Record<string, { totalScore: number; count: number }> = {};
+        
+        validPredictions.forEach(prediction => {
           if (prediction && prediction.label) {
             const mappedLabel = mapResultToSkinTone(prediction.label.toLowerCase());
-            predictionCounts[mappedLabel] = predictionCounts[mappedLabel] || { count: 0, totalScore: 0 };
-            predictionCounts[mappedLabel].count += 1;
-            predictionCounts[mappedLabel].totalScore += prediction.score;
+            predictionScores[mappedLabel] = predictionScores[mappedLabel] || { totalScore: 0, count: 0 };
+            // Weight the prediction by its confidence score
+            predictionScores[mappedLabel].totalScore += prediction.score * prediction.score; // Square the score to give more weight to high-confidence predictions
+            predictionScores[mappedLabel].count += 1;
           }
         });
         
-        // Find the prediction with highest count and average score
+        // Find the prediction with highest weighted average
         let bestPrediction = 'medium';
-        let maxCount = 0;
-        let highestAvgScore = 0;
+        let highestWeightedScore = 0;
         
-        Object.entries(predictionCounts).forEach(([prediction, { count, totalScore }]) => {
-          const avgScore = totalScore / count;
-          if (count > maxCount || (count === maxCount && avgScore > highestAvgScore)) {
+        Object.entries(predictionScores).forEach(([prediction, { totalScore, count }]) => {
+          const weightedAverage = totalScore / count;
+          if (weightedAverage > highestWeightedScore) {
             bestPrediction = prediction;
-            maxCount = count;
-            highestAvgScore = avgScore;
+            highestWeightedScore = weightedAverage;
           }
         });
         
-        console.log('Final combined prediction:', bestPrediction);
+        console.log('Final weighted prediction:', bestPrediction, 'with score:', highestWeightedScore);
         setAnalysis(skinToneData[bestPrediction] || skinToneData['medium']);
         
       } catch (error) {
@@ -124,11 +136,22 @@ const SkinToneAnalysis = ({ photos }: SkinToneAnalysisProps) => {
   }, [photos]);
 
   const mapResultToSkinTone = (label: string): string => {
-    if (label.includes('light') || label.includes('pale')) return 'fair';
-    if (label.includes('medium') || label.includes('tan')) return 'medium';
-    if (label.includes('dark') || label.includes('deep')) return 'deep';
-    if (label.includes('olive')) return 'olive';
-    return 'medium';
+    // Enhanced mapping logic with more variations
+    const mappings: Record<string, string[]> = {
+      fair: ['light', 'pale', 'fair', 'porcelain', 'ivory'],
+      light: ['beige', 'cream', 'neutral'],
+      medium: ['tan', 'medium', 'natural'],
+      olive: ['olive', 'golden', 'warm'],
+      deep: ['dark', 'deep', 'rich', 'ebony', 'mahogany']
+    };
+
+    for (const [tone, keywords] of Object.entries(mappings)) {
+      if (keywords.some(keyword => label.includes(keyword))) {
+        return tone;
+      }
+    }
+    
+    return 'medium'; // Default fallback
   };
 
   if (!analysis && !isAnalyzing && error) {
