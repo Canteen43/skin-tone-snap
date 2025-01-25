@@ -65,7 +65,7 @@ const SkinToneAnalysis = ({ photo }: SkinToneAnalysisProps) => {
         console.log('Image URL created:', imageUrl);
         
         const result = await classifier(imageUrl, {
-          topk: 1,
+          top_k: 1,
         });
         console.log('Classification result:', result);
         
